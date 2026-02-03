@@ -13,7 +13,7 @@
 [**简体中文**](./README.md) | [**English**](./README_EN.md)
 </div>
 
-<img width="2564" height="1536" alt="Gemini_Generated_Image_7urlyp7urlyp7url" src="./docs/5.jpg" />
+<img width="2564" height="1536" alt="Gemini_Generated_Image_7urlyp7urlyp7url" src="https://github.com/user-attachments/assets/b018204f-a95b-4f39-a104-1fda4432462f" />
 
 `ScAI Frontend` 是成都天巡微小卫星科技有限公司研发的星座仿真和综合管理平台的前端应用，旨在为用户提供直观、高性能的卫星轨道可视化与交互体验。
 
