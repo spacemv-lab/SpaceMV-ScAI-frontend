@@ -1,4 +1,4 @@
-# **ScAI Frontend: 天巡星座仿真与综合管理平台前端**
+# **ScAI Frontend: 天巡星座仿真与综合管理平台客户端**
 <div align="center">
 
 [![License](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](./LICENSE)
@@ -15,11 +15,13 @@
 
 <img width="2564" height="1536" alt="Gemini_Generated_Image_7urlyp7urlyp7url" src="https://github.com/user-attachments/assets/b018204f-a95b-4f39-a104-1fda4432462f" />
 
-`ScAI Frontend` 是成都天巡微小卫星科技有限公司研发的星座仿真和综合管理平台的前端应用，旨在为用户提供直观、高性能的卫星轨道可视化与交互体验。
+`ScAI`是由成都天巡微小卫星科技有限公司研发的一款星座仿真和综合管理平台，旨在解决当前商业航天领域星座规模急剧扩大带来的运控复杂性难题。
+
+平台采用面向Agent的架构设计，当前开源版本聚焦于构建高精度的轨道仿真计算引擎与数据交互底座。目前已支持光学遥感卫星全天候、全地域的目标区域覆盖仿真与资源调度，为未来引入智能体进行自动化任务编排奠定了坚实的算力与数据基础。`ScAI Frontend` 是`ScAI`平台的前端应用，旨在为用户提供直观、高性能的卫星轨道可视化与交互体验。
 
 本项目基于开源项目 [KeepTrack.Space](https://github.com/thkruz/keeptrack.space) 进行二次开发，在保留其强大的 WebGL 3D 渲染能力和高性能计算引擎的基础上，深度集成了 ScAI Backend 后端服务和 ClickHouse 数据库，实现了完整的星座仿真与综合管理解决方案。
 
-平台采用现代 Web 技术栈构建，基于 WebGL 实现高性能的 3D 渲染，支持实时展示卫星轨迹、传感器覆盖范围及目标区域。核心应用仅 7MB，可在 2 秒内加载完成，能够以 60fps 的帧率模拟 250 万个空间碎片，为用户提供流畅的交互体验。
+平台采用现代 Web 技术栈构建，基于 WebGL 实现高性能的 3D 渲染。核心应用仅 7MB，可在 2 秒内加载完成，为用户提供流畅的交互体验。
 
 `ScAI Frontend` 作为平台的核心用户界面组件，承载了数据可视化、用户交互、仿真结果展示及 API 接口调用等关键职能，与 ScAI Backend 紧密协作，共同构建了完整的星座仿真与管理生态系统。
 
@@ -30,7 +32,6 @@
 * [功能特性](#-功能特性)
 * [快速开始](#-快速开始)
 * [使用说明](#-使用说明)
-* [版本发布](#-版本发布)
 * [故障排除](#-故障排除)
 * [贡献指南](#-贡献指南)
 * [许可证](#-许可证)
@@ -39,59 +40,106 @@
 
 ## **🧩 核心模块**
 
-ScAI Frontend 由以下核心模块组成：
+ScAI Frontend 采用插件化架构，由以下核心模块组成：
 
 | 模块 | 目录 | 说明 |
 | :---- | :---- | :---- |
-| **核心渲染引擎** | src/ | 基于 WebGL 的高性能 3D 渲染引擎，支持地球、卫星、碎片等空间对象的实时渲染。 |
-| **Web Workers** | src/workers/ | 后台计算线程，负责卫星位置计算、轨道更新等密集型计算任务。 |
-| **UI 组件** | src/ui/ | 用户界面组件，包括控制面板、信息展示、交互控件等。 |
-| **工具库** | src/lib/ | 通用工具函数，包括动画效果、颜色处理、数据转换等。 |
+| **单例管理器** | src/singletons/ | 核心管理类，包括相机控制、目录管理、时间管理、UI管理、WebGL渲染器等 |
+| **插件系统** | src/plugins/ | 功能插件，包括卫星管理、传感器管理、分析工具等 |
+| **绘制管理器** | src/singletons/draw-manager/ | 3D对象绘制，包括地球、卫星等 |
+| **Web Workers** | src/webworker/ | 后台计算线程，负责卫星位置计算、轨道更新等密集型计算任务 |
+| **静态工具** | src/static/ | 通用工具函数，包括目录加载、搜索、轨道计算、坐标转换等 |
+| **认证服务** | src/auth/ | 用户认证服务，负责登录、登出和会话管理 |
+| **目录数据** | src/catalogs/ | 静态目录数据，包括星座、国家等 |
+| **设置管理** | src/settings/ | 应用设置管理，包括颜色方案、插件配置、预设等 |
+| **国际化** | src/locales/ | 多语言支持，包括中文、英文、德文、法文、日文、韩文、俄文、乌克兰文等 |
+| **工具库** | src/lib/ | 通用工具函数，包括动画效果、颜色处理、数据转换等 |
 
 ## **🏗 技术架构**
 
 ### **目录结构**
 
 ScAI Frontend/  
-├── src/                      \# 🎨 源代码目录  
-│   ├── main.ts              \# 应用入口文件  
-│   ├── keeptrack.ts         \# 核心应用逻辑  
-│   ├── container.ts         \# 容器管理  
-│   ├── workers/             \# Web Workers（后台计算线程）  
-│   ├── ui/                  \# UI 组件  
-│   └── lib/                 \# 工具库  
+├── src/                      # 🎨 源代码目录  
+│   ├── main.ts              # 应用入口文件  
+│   ├── keeptrack.ts         # 核心应用逻辑  
+│   ├── container.ts         # 容器管理  
+│   ├── auth/                # 认证服务  
+│   ├── catalogs/            # 静态目录数据（星座、国家等）  
+│   ├── lib/                 # 工具库  
+│   ├── locales/             # 多语言支持  
+│   ├── plugins/             # 功能插件系统  
+│   ├── settings/            # 设置管理  
+│   ├── singletons/          # 单例管理器  
+│   │   ├── draw-manager/    # 绘制管理器  
+│   │   ├── color-schemes/   # 颜色方案  
+│   │   └── catalog-manager/ # 目录管理器  
+│   ├── static/              # 静态工具函数  
+│   ├── types/               # TypeScript 类型定义  
+│   └── webworker/           # Web Workers（后台计算线程）  
 │  
-├── build/                    \# 🔨 构建脚本  
-│   ├── build-manager.ts     \# 构建管理器  
-│   └── set-env.ts           \# 环境配置  
+├── build/                    # 🔨 构建脚本  
+│   ├── build-manager.ts     # 构建管理器  
+│   ├── webpack-manager.ts   # Webpack 配置  
+│   ├── set-env.ts           # 环境配置  
+│   └── lib/                 # 构建工具库  
 │  
-├── docs/                     \# 📚 文档目录  
-│   ├── screenshots/         \# 截图展示  
-│   └── release-notes/       \# 版本发布说明  
+├── docs/                     # 📚 用户手册  
+│   ├── images/              # 功能截图  
+│   ├── source/              # 文档源文件  
+│   ├── app_*.md             # 功能模块文档  
+│   ├── base_*.md            # 基础功能文档  
+│   └── appendix_*.md        # 附录文档  
 │  
-├── test/                     \# 🧪 测试文件  
-├── public/                   \# 📁 静态资源  
-├── package.json             \# 项目配置与依赖  
-├── tsconfig.json            \# TypeScript 配置  
-└── .env.example             \# 环境配置示例文件
+├── public/                   # 📁 静态资源  
+│   ├── css/                 # 样式文件  
+│   ├── img/                 # 图片资源  
+│   ├── audio/               # 音效文件  
+│   ├── data/                # 数据文件  
+│   └── flags/               # 国旗图标  
+│  
+├── auth/                     # 🔐 认证相关  
+│   └── callback.html        # 认证回调页面  
+│  
+├── package.json             # 项目配置与依赖  
+├── tsconfig.json            # TypeScript 配置  
+├── babel.config.cjs         # Babel 配置  
+├── jest.config.js           # Jest 测试配置  
+├── .env.example             # 环境配置示例文件  
+└── .prettierrc              # Prettier 代码格式化配置
 
 ### **技术栈**
 
 | 领域 | 技术选型 | 说明 |
 | :--- | :--- | :--- |
 | **开发语言** | **TypeScript** | 类型安全的 JavaScript 超集 |
-| **构建工具** | **Webpack / Rspack** | 模块打包与构建 |
+| **构建工具** | **Rspack** | 高性能的模块打包工具 |
+| | **Webpack** | 模块打包与构建（通过 webpack-manager.ts 配置） |
+| | **Babel** | JavaScript/TypeScript 代码转换 |
 | **图形渲染** | **WebGL** | 高性能 3D 图形渲染 |
+| | **WebGL OBJ Loader** | 3D 模型加载器 |
 | **UI 框架** | **Materialize CSS** | 响应式 UI 组件库 |
+| | **Material Icons** | 图标库 |
+| | **Flag Icons** | 国旗图标 |
 | **数据可视化** | **ECharts** | 交互式图表绘制 |
+| | **ECharts GL** | 3D 数据可视化 |
+| **国际化** | **i18next** | 国际化框架 |
+| | **i18next Browser Language Detector** | 浏览器语言检测 |
 | **测试框架** | **Jest** | 单元测试框架 |
 | | **Cypress** | 端到端测试框架 |
-| **后端集成** | **FastAPI** | 与 ScAI Backend 的 RESTful API 通信 |
-| | **Axios** | HTTP 请求库 |
-| **数据存储** | **ClickHouse** | 通过后端访问的高性能时序数据库 |
+| | **Testing Library** | DOM 测试工具 |
+| **代码质量** | **ESLint** | 代码检查工具 |
+| | **Prettier** | 代码格式化工具 |
+| | **Husky** | Git 钩子管理 |
 | **工具组件** | **ootk** | 轨道计算工具库 |
 | | **gl-matrix** | 矩阵运算库 |
-| | **i18next** | 国际化支持 |
+| | **numeric** | 数值计算库 |
+| | **file-saver** | 文件保存工具 |
+| | **uuid** | UUID 生成器 |
+| | **draggabilly** | 拖拽功能库 |
+| **后端集成** | **FastAPI** | 与 ScAI Backend 的 RESTful API 通信 |
+| | **环境变量配置** | 通过 .env 文件配置后端服务地址 |
+| **数据存储** | **ClickHouse** | 通过后端 API 访问的高性能时序数据库 |
 
 ### **系统集成架构**
 
@@ -106,53 +154,76 @@ ScAI Frontend 与 ScAI Backend 构成了完整的星座仿真与管理平台：
 ### **数据流向**
 
 graph TD  
-    A\[用户操作\] \--\>|交互事件| B\[UI 组件\]  
-    B \--\>|发送请求| C\[API 调用层\]  
-    C \<--\>|返回数据| D\[ScAI Backend\]  
-    D \--\>|提供数据| E\[数据管理器\]  
-    E \--\>|更新状态| F\[Web Workers\]  
-    F \--\>|计算结果| G\[渲染引擎\]  
-    G \--\>|渲染画面| H\[WebGL Canvas\]
+    A[用户操作] -->|交互事件| B[插件系统]  
+    B -->|调用管理器| C[单例管理器]  
+    C -->|Fetch API| D[ScAI Backend API]  
+    D -->|返回数据| C  
+    C -->|更新状态| E[Web Workers]  
+    E -->|计算结果| F[绘制管理器]  
+    F -->|渲染画面| G[WebGL Canvas]  
+    C -->|更新UI| B
 
 ## **✨ 功能特性**
 
-### **1. 核心渲染引擎**
+### **1. 插件化架构**
 
-* 🌍 **3D 地球渲染**: 高精度的地球模型，支持纹理贴图和光照效果。  
-* 🛰️ **卫星可视化**: 实时渲染卫星位置、轨道轨迹及运动状态。  
-* 🌌 **星空背景**: 动态星空背景，增强视觉沉浸感。  
-* ⚡ **高性能渲染**: 支持同时渲染 250 万个空间对象，保持 60fps 流畅帧率。
+* 🔌 **插件系统**: 采用模块化插件架构，支持灵活的功能扩展
+* 📦 **丰富插件**: 包含多个功能插件，涵盖卫星管理、传感器管理、分析工具等
 
-### **2. Web Workers 后台计算**
+### **2. 核心渲染引擎**
 
-* 📊 **位置计算**: 实时计算卫星在轨道上的精确位置。  
-* 🔄 **轨道更新**: 动态更新轨道轨迹，支持卫星机动模拟。  
-* 💾 **数据管理**: 高效的卫星数据索引与查询机制。
+* 🌍 **3D 地球渲染**: 高精度的地球模型，支持纹理贴图、云层、光照效果
+* 🛰️ **卫星可视化**: 实时渲染卫星位置、轨道轨迹及运动状态
+* 🌌 **星空背景**: 动态星空背景，增强视觉沉浸感
+* ⚡ **高性能渲染**: 支持同时渲染大量空间对象，保持流畅帧率
 
-### **3. 用户交互功能**
+### **3. Web Workers 后台计算**
 
-* 🎯 **对象选择**: 点击选择卫星、传感器或目标区域。  
-* 📈 **信息展示**: 显示选定对象的详细参数和状态信息。  
-* 🎮 **交互控制**: 支持鼠标、键盘及游戏手柄操作。  
-* 🌐 **视图控制**: 缩放、旋转、平移等 3D 视图操作。
+* 📊 **位置计算**: 实时计算卫星在轨道上的精确位置
+* 🔄 **轨道更新**: 动态更新轨道轨迹，支持卫星机动模拟
+* 💾 **数据管理**: 高效的卫星数据索引与查询机制
+* 🧮 **轨道计算**: 使用 ootk 库进行精确的轨道力学计算
 
-### **4. 数据可视化**
+### **4. 用户交互功能**
 
-* 📊 **图表展示**: 使用 ECharts 展示轨道参数、覆盖分析等数据。  
-* 🗺️ **地图集成**: 支持瓦片地图和自定义地图服务。  
-* 📦 **数据导出**: 支持导出仿真结果为多种格式。
+* 🎯 **对象选择**: 点击选择卫星或其他空间目标
+* 📈 **信息展示**: 显示选定对象的详细参数和状态信息
+* 🎮 **交互控制**: 支持鼠标、键盘
+* 🌐 **视图控制**: 缩放、旋转、平移等 3D 视图操作
+* 🎨 **颜色方案**: 支持多种颜色方案
 
-### **5. 后端集成**
+### **5. 数据可视化**
 
-* 🔌 **API 通信**: 通过 RESTful API 与 ScAI Backend 进行数据交互。  
-* 🛰️ **卫星管理**: 支持从后端获取卫星数据、星座配置和传感器信息。  
-* 📊 **仿真结果**: 实时接收和展示后端生成的仿真分析结果。  
-* 👤 **用户认证**: 集成后端的 JWT 认证机制，确保数据安全。
+* 📊 **图表展示**: 使用 ECharts 展示轨道参数等数据
+* 🗺️ **地图集成**: 支持瓦片地图和自定义地图服务
+* 📦 **数据导出**: 支持导出仿真结果
+* 📉 **分析图表**: 包括 ECF/ECI 坐标图等
+
+### **6. 后端集成**
+
+* 🔌 **API 通信**: 通过 Fetch API 与 ScAI Backend 进行数据交互
+* 🛰️ **卫星数据**: 从后端获取卫星 TLE 数据和详细信息
+* 🌟 **星座管理**: 支持从后端获取和管理星座配置
+* 👤 **用户认证**: 集成认证服务，支持用户登录和会话管理
+
+### **7. 多语言支持**
+
+* 🌍 **国际化**: 支持 8 种语言（中文、英文、德文、法文、日文、韩文、俄文、乌克兰文）
+* 🔤 **自动检测**: 自动检测浏览器语言并切换
+* 📝 **易于扩展**: 基于i18next框架，易于添加新语言
+
+### **8. 高级功能**
+
+* 📊 **分析工具**: 轨道分析、覆盖性分析、LLM对话
+* 🎬 **屏幕录制**: 支持屏幕录制和视频导演模式
+* � **截图功能**: 支持截图和图片管理
+* 🔍 **搜索功能**: 强大的卫星和对象搜索功能
 
 ## **🚀 快速开始**
 
 ### **前置条件**
 
+* **Docker** (用于部署 docsify 实现用户手册在线浏览) 
 * **Node.js** (推荐 18.x 或更高版本)  
 * **npm** 或 **pnpm** 包管理器  
 * 现代浏览器（Chrome、Firefox、Edge 等）
@@ -161,7 +232,7 @@ graph TD
 
 ### **0. 启动后端服务**
 
-在使用前端之前，需要先启动 ScAI Backend 后端服务。请参考 [ScAI Backend README](../ScAI%20backend/README.md) 进行后端服务的安装和配置。
+在使用前端之前，需要先启动 ScAI Backend 后端服务。请参考 [ScAI Backend README](https://github.com/tianxunweixiao/ScAI-backend/blob/main/README.md) 进行后端服务的安装和配置。
 
 确保以下后端服务已启动：
 * **账户管理服务**: http://localhost:5001
@@ -176,7 +247,7 @@ git clone https://github.com/tianxunweixiao/ScAI-frontend.git
 cd ScAI-frontend
 
 # 安装依赖  
-npm install
+npm i
 # 或使用 pnpm
 pnpm install
 ```
@@ -191,27 +262,28 @@ cp .env.example .env
 编辑 .env 文件，重点配置以下内容：
 
 # API 配置  
-API_BASE_URL=http://localhost:8401
-API_ACCOUNT_URL=http://localhost:5001
+API_BASE_URL=http://localhost:8401 # server_backend
+API_ACCOUNT_URL=http://localhost:5001 # account_backend
 
-# 数据源配置  
-CELESTRAK_API_URL=https://celestrak.org/NORAD/elements/gp.php
+# 在线用户手册
+USER_MANUAL_URL=http://localhost:3000
 
-# Google Analytics（可选）  
-GA_TRACKING_ID=your_tracking_id
 ```
 
 ### **3. 构建项目**
 
 ```bash
+# docsify部署
+cd docs
+docker build -t docs .
+docker run -d   --name my-docs \
+-p 3000:3000 \
+-v $(pwd):/docs \
+docs
+
 # 生产环境构建
 npm run build
 
-# 开发环境构建
-npm run build:dev
-
-# 监听模式构建（开发时使用）
-npm run build:watch
 ```
 
 ### **4. 启动服务**
@@ -231,41 +303,13 @@ npm start
 
 主渲染循环（drawManager.ts）经过优化以减少内存泄漏并保持高 FPS。这通常通过让函数修改全局变量而不是返回变量，以及使用长函数而不是拆分成多个函数来实现——这是有意为之的。
 
-对卫星的任何修改都需要将信息传递给 positionCruncher Web Worker，以确保 UI 计算与屏幕上的点匹配。大多数计算使用暴力猜测和检查方法（仰角时间、导弹轨迹等）。优化这些计算的循环对于保持项目的响应性至关重要。提高性能的一个技巧是 satSet 创建索引 -> NORAD ID 号和索引 -> COSPAR 号的字典，以允许快速查找卫星数据。
+各个插件和功能模块的使用说明可以参考主页面右上角的在线用户手册。
+
+<img width="2560" height="1440" alt="88ad034a54a84958b8c24d3b3144b7b8" src="https://github.com/user-attachments/assets/c269de40-e4e9-4e9a-a3ff-38130b60f2b6" />
 
 ### **数据源**
 
-生成 TLE.json 的 TypeScript 文件未包含在内，但可以参考 <https://api.keeptrack.space/v2/sats> 获取最新的卫星目录。
-
-### **测试**
-
-```bash
-# 运行单元测试
-npm run test
-
-# 运行测试并监听变化
-npm run test:watch
-
-# 运行端到端测试
-npm run test:e2e-ci
-
-# 打开 Cypress 测试界面
-npm run cypress:open
-```
-
-## **📋 版本发布**
-
-- Version 10.0 - [Euclid](./docs/v10.md)
-- Version 9.1 - [Kepler](./docs/v9.1.md)
-- Version 9.0 - [Kepler](./docs/v9.md)
-- Version 8.2 - [Phoenix](./docs/v8.2.md)
-- Version 8.1 - [Phoenix](./docs/v8.1.md)
-- Version 8.0 - [Phoenix](./docs/v8.md)
-- Version 7.2 - [Nebula Navigator](./docs/v7.2.md)
-- Version 7.0 - [Vega Viewpoint](./docs/v7.md)
-- Version 6.0 - [Celestial Symphony](./docs/v6.md)
-- Version 5.4 - [Orion Overhaul](./docs/v5.4.md)
-- Version 5.0 - [Apollo Augments](./docs/v5.md)
+可参考 <https://api.keeptrack.space/v2/sats> 获取最新的卫星目录。
 
 ## **🔧 故障排除**
 
@@ -327,11 +371,7 @@ You should have received a copy of the GNU Affero General Public License along w
 
 ## ✅ 待办事项
 
-- [ ] **完善国际化支持**: 增加更多语言包，支持多语言切换。  
-- [ ] **增强交互体验**: 优化移动端触控操作，支持手势控制。  
-- [ ] **扩展可视化功能**: 增加更多图表类型和数据展示方式。  
-- [ ] **性能优化**: 进一步优化渲染性能，支持更大规模的卫星数据。  
-- [ ] **完善文档**: 补充详细的开发文档和 API 参考手册。  
-- [ ] **增加单元测试覆盖率**: 提高测试覆盖率至 80% 以上。  
-- [ ] **集成更多数据源**: 支持更多卫星数据提供商的 API。  
-- [ ] **离线模式支持**: 实现离线数据缓存和离线运行功能。
+- [ ] **引入智能体 (Agent)**: 集成 AI Agent 进行自动化的星座仿真任务编排与调度。
+- [ ] **多星座支持**: 增加对导航星座、通信星座的预设支持。
+- [ ] **STK 接口增强**: 拓展 API 覆盖范围，支持更细粒度的仿真参数配置
+- [ ] **完善文档**: 补充详细的视频教程和 API 接口用例。
