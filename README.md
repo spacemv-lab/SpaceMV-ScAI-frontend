@@ -1,4 +1,4 @@
-# **SpaceMV-ScAI Frontend: 天巡星座仿真与综合管理平台客户端**
+# **SpaceMV-ScAI Frontend: 星座智能管理平台客户端**
 <div align="center">
 
 [![License](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](./LICENSE)
