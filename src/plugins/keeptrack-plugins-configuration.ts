@@ -95,4 +95,6 @@ export type KeepTrackPluginsConfiguration = {
   GroundTargetPlugin?: PluginConfiguration;
   ConstellationDeclineSimulationPlugin?: PluginConfiguration;
   AlgorithmModelPlugin?: PluginConfiguration;
+  AdsbPlugin?: PluginConfiguration;
+  AisPlugin?: PluginConfiguration;
 };

@@ -660,6 +660,8 @@ export abstract class KeepTrackPlugin {
         'GroundTargetPlugin',
         'ConstellationDeclineSimulationPlugin',
         'AlgorithmModelPlugin',
+        'AdsbPlugin',
+        'AisPlugin',
       ];
 
       // 如果不是WatchlistPlugin或ReportsPlugin，则隐藏按钮

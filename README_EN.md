@@ -1,377 +1,360 @@
-# **SpaceMV-ScAI Frontend: Constellation Intelligent Management Platform Client**
+# SpaceMV-ScAI Frontend
+
 <div align="center">
 
 [![License](https://img.shields.io/badge/License-AGPL%203.0-blue.svg)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/tianxunweixiao/SpaceMV-ScAI-Frontend)
+[![Build](https://img.shields.io/badge/Build-Rspack%20%2B%20Webpack-8DD6F9?logo=webpack&logoColor=black)](./package.json)
+[![Graphics](https://img.shields.io/badge/Graphics-WebGL-990000?logo=webgl&logoColor=white)](https://www.khronos.org/webgl/)
+[![Test](https://img.shields.io/badge/Test-Jest-C21325?logo=jest&logoColor=white)](https://jestjs.io/)
 
-[![Webpack](https://img.shields.io/badge/Build-Webpack-8DD6F9?logo=webpack&logoColor=black)](https://webpack.js.org/)
-[![WebGL](https://img.shields.io/badge/Graphics-WebGL-990000?logo=webgl&logoColor=white)](https://www.khronos.org/webgl/)
-[![Jest](https://img.shields.io/badge/Test-Jest-C21325?logo=jest&logoColor=white)](https://jestjs.io/)
-[![Cypress](https://img.shields.io/badge/E2E-Cypress-17202C?logo=cypress&logoColor=white)](https://www.cypress.io/)
+[简体中文](./README.md) | [English](./README_EN.md)
 
-[**简体中文**](./README.md) | [**English**](./README_EN.md)
 </div>
 
 <img width="2564" height="1536" alt="Gemini_Generated_Image_7urlyp7urlyp7url" src="https://github.com/user-attachments/assets/b018204f-a95b-4f39-a104-1fda4432462f" />
 
-[SpaceMV-ScAI](https://github.com/tianxunweixiao/SpaceMV-ScAI/tree/main) is a constellation intelligent management platform developed by Chengdu Tianxun Microsatellite Technology Co., Ltd., designed to address the operational control complexity challenges brought by the rapid expansion of constellation scale in the commercial aerospace sector.
+`SpaceMV-ScAI Frontend` is the frontend client of the `SpaceMV-ScAI` constellation intelligent management platform. It is responsible for 3D satellite visualization, sensor and situational analysis, constellation management, coverage simulation result display, and integration with backend services, the user manual, ScAI Agent, ADS-B / AIS, and other external systems.
 
-The platform adopts an Agent-oriented architecture design. The current open-source version focuses on building a high-precision orbit simulation calculation engine and data interaction foundation. It currently supports all-weather, all-region target area coverage simulation and resource scheduling for optical remote sensing satellites, laying a solid computing and data foundation for the future introduction of intelligent agents for automated task orchestration. `SpaceMV-ScAI Frontend` is the frontend application of the `SpaceMV-ScAI` platform, aiming to provide users with an intuitive, high-performance satellite orbit visualization and interactive experience.
+The project is a secondary development based on [KeepTrack.Space](https://github.com/thkruz/keeptrack.space). The current version extends it with login authentication, constellation upload and deletion, coverage analysis, streaming simulation result display, and multi-service integration capabilities.
 
-This project is a secondary development based on the open-source project [KeepTrack.Space](https://github.com/thkruz/keeptrack.space). While retaining its powerful WebGL 3D rendering capabilities and high-performance computing engine, it deeply integrates with SpaceMV-ScAI Backend services and ClickHouse database, implementing a complete constellation intelligent management solution.
+![Preview](./public/keeptrack10-preview.png)
 
-The platform is built using modern web technology stack, implementing high-performance 3D rendering based on WebGL. The core application is only 7MB and can load within 2 seconds, providing users with a smooth interactive experience.
+## Current Capabilities
 
-`SpaceMV-ScAI Frontend`, as the core user interface component of the platform, carries key functions such as data visualization, user interaction, simulation result display, and API interface calls, working closely with `SpaceMV-ScAI Backend` to jointly build a complete constellation simulation and management ecosystem.
+### 1. 3D Visualization
 
-## **📖 Table of Contents**
+- Rendering of the Earth, satellites, orbits, the Sun, the Moon, and starfield scenes
+- Satellite search, selection, highlighting, orbit display, and information panels
+- Timeline, time machine, day-night switching, and multiple viewing modes
+- Satellite view, 3D map, planetarium, and celestial view
 
-* [Core Modules](#-core-modules)
-* [Technical Architecture](#-technical-architecture)
-* [Features](#-features)
-* [Quick Start](#-quick-start)
-* [Usage Guide](#-usage-guide)
-* [Troubleshooting](#-troubleshooting)
-* [Contributing Guide](#-contributing-guide)
-* [License](#-license)
-* [Contact](#-contact)
-* [Todo List](#-todo-list)
+### 2. Sensors and Analysis
 
-## **🧩 Core Modules**
+- Sensor list, sensor details, and custom sensors
+- Single-station / multi-station observation geometry calculation
+- Sensor field of view, short-term fence, surveillance fence, and satellite FOV
+- DOP analysis, polar charts, orbit reference, and close-target analysis
 
-SpaceMV-ScAI Frontend adopts a plugin-based architecture, composed of the following core modules:
+### 3. Constellation and Business Features
 
-| Module | Directory | Description |
-| :---- | :---- | :---- |
-| **Singleton Managers** | src/singletons/ | Core management classes, including camera control, catalog management, time management, UI management, WebGL renderer, etc. |
-| **Plugin System** | src/plugins/ | Functional plugins, including satellite management, sensor management, analysis tools, etc. |
-| **Draw Manager** | src/singletons/draw-manager/ | 3D object drawing, including Earth, satellites, etc. |
-| **Web Workers** | src/webworker/ | Background computation threads, responsible for satellite position calculation, orbit updates, and other intensive computation tasks |
-| **Static Utilities** | src/static/ | Common utility functions, including catalog loading, search, orbit calculation, coordinate conversion, etc. |
-| **Authentication Service** | src/auth/ | User authentication service, responsible for login, logout, and session management |
-| **Catalog Data** | src/catalogs/ | Static catalog data, including constellations, countries, etc. |
-| **Settings Management** | src/settings/ | Application settings management, including color schemes, plugin configurations, presets, etc. |
-| **Internationalization** | src/locales/ | Multi-language support, including Chinese, English, German, French, Japanese, Korean, Russian, Ukrainian, etc. |
-| **Utility Library** | src/lib/ | Common utility functions, including animation effects, color processing, data conversion, etc. |
+- Constellation category display: navigation, communication, Earth observation, and custom
+- Constellation query and one-click search
+- Constellation file upload, deletion, and refresh
+- Coverage analysis plugin
+- Analysis at both single-satellite and constellation levels
+- Streaming display of calculation progress and results
+- Support for ground point, line, and area targets
+- Coverage analysis requires the current user to have access permission
 
-## **🏗 Technical Architecture**
+### 4. Orbit and Space Situational Awareness
 
-### **Directory Structure**
+- New launches, launch calendar, missile simulation, and breakup events
+- Collision analysis, debris screening, and impact prediction
+- Satellite changes, transponder channel data, and country-based filtering
+- Graphical analysis for ECI / ECF / RIC / Time2Lon / Lat2Lon / Inc2Alt / Inc2Lon
 
-SpaceMV-ScAI Frontend/  
-├── src/                      # 🎨 Source code directory  
-│   ├── main.ts              # Application entry file  
-│   ├── keeptrack.ts         # Core application logic  
-│   ├── container.ts         # Container management  
-│   ├── auth/                # Authentication service  
-│   ├── catalogs/            # Static catalog data (constellations, countries, etc.)  
-│   ├── lib/                 # Utility library  
-│   ├── locales/             # Multi-language support  
-│   ├── plugins/             # Functional plugin system  
-│   ├── settings/            # Settings management  
-│   ├── singletons/          # Singleton managers  
-│   │   ├── draw-manager/    # Draw manager  
-│   │   ├── color-schemes/   # Color schemes  
-│   │   └── catalog-manager/ # Catalog manager  
-│   ├── static/              # Static utility functions  
-│   ├── types/               # TypeScript type definitions  
-│   └── webworker/           # Web Workers (background computation threads)  
-│  
-├── build/                    # 🔨 Build scripts  
-│   ├── build-manager.ts     # Build manager  
-│   ├── webpack-manager.ts   # Webpack configuration  
-│   ├── set-env.ts           # Environment configuration  
-│   └── lib/                 # Build utility library  
-│  
-├── docs/                     # 📚 User manual  
-│   ├── images/              # Feature screenshots  
-│   ├── source/              # Documentation source files  
-│   ├── app_*.md             # Feature module documentation  
-│   ├── base_*.md            # Basic function documentation  
-│   └── appendix_*.md        # Appendix documentation  
-│  
-├── public/                   # 📁 Static resources  
-│   ├── css/                 # Style files  
-│   ├── img/                 # Image resources  
-│   ├── audio/               # Sound effect files  
-│   ├── data/                # Data files  
-│   └── flags/               # Flag icons  
-│  
-├── auth/                     # 🔐 Authentication related  
-│   └── callback.html        # Authentication callback page  
-│  
-├── package.json             # Project configuration and dependencies  
-├── tsconfig.json            # TypeScript configuration  
-├── babel.config.cjs         # Babel configuration  
-├── jest.config.js           # Jest test configuration  
-├── .env.example             # Environment configuration example file  
-└── .prettierrc              # Prettier code formatting configuration
+### 5. Output and External Integration
 
-### **Technology Stack**
+- Screenshots, screen recording, and Video Director
+- Catalog export: TLE / 3LE / CSV / targets within FOV
+- Online user manual entry
+- Standalone ScAI Agent frontend integration
+- Embedded ADS-B / AIS pages
 
-| Domain | Technology | Description |
+## Technology Stack
+
+| Category | Technology |
+| :--- | :--- |
+| Language | TypeScript |
+| Build | Rspack, Webpack, Babel, TSX |
+| Rendering | WebGL, webgl-obj-loader |
+| Computation | Web Workers, ootk, gl-matrix, numeric |
+| UI | Materialize CSS, Material Icons |
+| Charts | ECharts, ECharts GL |
+| Internationalization | i18next, i18next-browser-languagedetector |
+| Testing | Jest, Testing Library, Cypress |
+
+## Directory Structure
+
+| Directory | Description |
+| :--- | :--- |
+| `src/` | Core source code |
+| `src/plugins/` | Feature plugins |
+| `src/singletons/` | Core singletons for rendering, catalog, time, input, and more |
+| `src/webworker/` | Threads for position and orbit calculations |
+| `src/settings/` | Default configuration, plugin switches, and runtime settings |
+| `src/auth/` | Login state retrieval and authentication logic |
+| `build/` | Build pipeline and environment variable loading |
+| `public/` | Static assets, login page, textures, styles, and sample data |
+| `docs/` | Docsify user manual source |
+| `deploy/nginx/` | Nginx deployment configuration |
+| `test/` | Jest tests and test assets |
+
+## Runtime Dependencies and Integration
+
+The current version is intended to be served through an Nginx reverse proxy by default, rather than exposing the static directory directly with `npm start`.
+
+The repository already includes a reusable Nginx configuration file:
+
+- [`deploy/nginx/frontend.conf`](./deploy/nginx/frontend.conf)
+
+### Main Endpoints the Frontend Depends On
+
+| Capability | Default Endpoint | Description |
 | :--- | :--- | :--- |
-| **Development Language** | **TypeScript** | Type-safe JavaScript superset |
-| **Build Tools** | **Rspack** | High-performance module bundler |
-| | **Webpack** | Module bundling and building (configured via webpack-manager.ts) |
-| | **Babel** | JavaScript/TypeScript code transformation |
-| **Graphics Rendering** | **WebGL** | High-performance 3D graphics rendering |
-| | **WebGL OBJ Loader** | 3D model loader |
-| **UI Framework** | **Materialize CSS** | Responsive UI component library |
-| | **Material Icons** | Icon library |
-| | **Flag Icons** | Flag icons |
-| **Data Visualization** | **ECharts** | Interactive chart drawing |
-| | **ECharts GL** | 3D data visualization |
-| **Internationalization** | **i18next** | Internationalization framework |
-| | **i18next Browser Language Detector** | Browser language detection |
-| **Testing Framework** | **Jest** | Unit testing framework |
-| | **Cypress** | End-to-end testing framework |
-| | **Testing Library** | DOM testing tools |
-| **Code Quality** | **ESLint** | Code checking tool |
-| | **Prettier** | Code formatting tool |
-| | **Husky** | Git hooks management |
-| **Utility Components** | **ootk** | Orbit calculation utility library |
-| | **gl-matrix** | Matrix operation library |
-| | **numeric** | Numerical calculation library |
-| | **file-saver** | File saving tool |
-| | **uuid** | UUID generator |
-| | **draggabilly** | Drag functionality library |
-| **Backend Integration** | **FastAPI** | RESTful API communication with SpaceMV-ScAI Backend |
-| | **Environment Variable Configuration** | Configure backend service address via .env file |
-| **Data Storage** | **ClickHouse** | High-performance time-series database accessed via backend API |
+| Login | `/api/login` | Login page submission for username and password |
+| Registration | `/api/accountAdd` | Registration form on the login page |
+| Main Business API | `/api/settings` | Base path for satellite catalog, constellations, coverage analysis, and related APIs |
+| Simulation Result Page | `/simulation/*` | Coverage analysis result pages |
+| User Manual | `/manual` | Docsify documentation entry |
+| ScAI Agent | `SCAI_AGENT_URL` | Standalone frontend address |
+| ADS-B / AIS | `SCAI_ADSB_URL` / `SCAI_AIS_URL` | External embedded page addresses |
 
-### **System Integration Architecture**
+### APIs Accessed Under `TIANXUN_SERVER_SETTINGS`
 
-SpaceMV-ScAI Frontend and SpaceMV-ScAI Backend form a complete constellation simulation and management platform:
+- `/satellites`
+- `/constellations`
+- `/constellations_find/:id`
+- `/upload_constellation`
+- `/simulation_stream`
 
-* **Frontend (SpaceMV-ScAI Frontend)**: Responsible for user interface, data visualization, interactive control, and 3D rendering
-* **Backend (SpaceMV-ScAI Backend)**: Provides API services, simulation calculation, data processing, and business logic
-* **Database (ClickHouse)**: Stores satellite data, simulation results, and user information
+## Quick Start
 
-The frontend communicates with the backend through RESTful API, and the backend is responsible for interacting with the ClickHouse database to implement data persistence and efficient queries.
+### 1. Prerequisites
 
-### **Data Flow**
+- Node.js `18.x` or later
+- npm or pnpm
+- Docker or host-level Nginx
+- A modern browser, preferably Chrome / Edge
 
-graph TD  
-    A[User Operation] -->|Interaction Event| B[Plugin System]  
-    B -->|Call Manager| C[Singleton Managers]  
-    C -->|Fetch API| D[SpaceMV-ScAI Backend API]  
-    D -->|Return Data| C  
-    C -->|Update State| E[Web Workers]  
-    E -->|Calculation Result| F[Draw Manager]  
-    F -->|Render Scene| G[WebGL Canvas]  
-    C -->|Update UI| B
-
-## **✨ Features**
-
-### **1. Plugin-based Architecture**
-
-* 🔌 **Plugin System**: Adopts modular plugin architecture, supporting flexible feature extensions
-* 📦 **Rich Plugins**: Includes multiple functional plugins, covering satellite management, sensor management, analysis tools, etc.
-
-### **2. Core Rendering Engine**
-
-* 🌍 **3D Earth Rendering**: High-precision Earth model, supporting texture mapping, cloud layers, and lighting effects
-* 🛰️ **Satellite Visualization**: Real-time rendering of satellite positions, orbit trajectories, and motion states
-* 🌌 **Starry Background**: Dynamic starry background, enhancing visual immersion
-* ⚡ **High-performance Rendering**: Supports rendering a large number of space objects simultaneously while maintaining smooth frame rates
-
-### **3. Web Workers Background Computation**
-
-* 📊 **Position Calculation**: Real-time calculation of precise satellite positions on orbit
-* 🔄 **Orbit Updates**: Dynamic updates of orbit trajectories, supporting satellite maneuver simulation
-* 💾 **Data Management**: Efficient satellite data indexing and query mechanism
-* 🧮 **Orbit Calculation**: Uses ootk library for precise orbital mechanics calculations
-
-### **4. User Interaction Features**
-
-* 🎯 **Object Selection**: Click to select satellites or other space objects
-* 📈 **Information Display**: Display detailed parameters and status information of selected objects
-* 🎮 **Interactive Control**: Supports mouse, keyboard
-* 🌐 **View Control**: Zoom, rotate, pan, and other 3D view operations
-* 🎨 **Color Schemes**: Supports multiple color schemes
-
-### **5. Data Visualization**
-
-* 📊 **Chart Display**: Uses ECharts to display orbit parameters and other data
-* 🗺️ **Map Integration**: Supports tile maps and custom map services
-* 📦 **Data Export**: Supports exporting simulation results
-* 📉 **Analysis Charts**: Including ECF/ECI coordinate plots, etc.
-
-### **6. Backend Integration**
-
-* 🔌 **API Communication**: Data interaction with SpaceMV-ScAI Backend via Fetch API
-* 🛰️ **Satellite Data**: Retrieves satellite TLE data and detailed information from the backend
-* 🌟 **Constellation Management**: Supports retrieving and managing constellation configurations from the backend
-* 👤 **User Authentication**: Integrated authentication service, supporting user login and session management
-
-### **7. Multi-language Support**
-
-* 🌍 **Internationalization**: Supports 8 languages (Chinese, English, German, French, Japanese, Korean, Russian, Ukrainian)
-* 🔤 **Auto Detection**: Automatically detects browser language and switches
-* 📝 **Easy Extension**: Based on i18next framework, easy to add new languages
-
-### **8. Advanced Features**
-
-* 📊 **Analysis Tools**: Orbit analysis, coverage analysis, LLM dialogue
-* 🎬 **Screen Recording**: Supports screen recording and video director mode
-* 📸 **Screenshot Function**: Supports screenshot and image management
-* 🔍 **Search Function**: Powerful satellite and object search function
-
-## **🚀 Quick Start**
-
-### **Prerequisites**
-
-* **Docker** (for deploying docsify to enable online browsing of user manual) 
-* **Node.js** (recommended 18.x or higher)  
-* **npm** or **pnpm** package manager  
-* Modern browser (Chrome, Firefox, Edge, etc.)
-* **SpaceMV-ScAI Backend** backend service (need to start backend service first)
-* **ClickHouse** database (managed by backend service)
-
-### **0. Start Backend Service**
-
-Before using the frontend, you need to start the SpaceMV-ScAI Backend service first. Please refer to [SpaceMV-ScAI Backend README](https://github.com/tianxunweixiao/SpaceMV-ScAI-backend/blob/main/README.md) for backend service installation and configuration.
-
-Ensure the following backend services are started:
-* **Account Management Service**: http://localhost:5001
-* **Simulation Service**: http://localhost:8401
-* **ClickHouse Database**: Port 8123 (HTTP) / 9000 (Native)
-
-### **1. Environment Setup**
+### 2. Install Dependencies
 
 ```bash
-# Clone repository  
-git clone https://github.com/tianxunweixiao/SpaceMV-ScAI-frontend.git   
-cd SpaceMV-ScAI-frontend
-
-# Install dependencies  
-npm i
-# Or use pnpm
-pnpm install
+git clone https://github.com/tianxunweixiao/SpaceMV-ScAI-Frontend.git
+cd SpaceMV-ScAI-Frontend
+npm install
 ```
 
-### **2. Environment Variable Configuration**
+### 3. Configure Environment Variables
+
+Copy the example file:
 
 ```bash
-Copy example file and modify configuration:
-
 cp .env.example .env
-
-Edit .env file, focus on configuring the following:
-
-# API Configuration  
-API_BASE_URL=http://localhost:8401 # server_backend
-API_ACCOUNT_URL=http://localhost:5001 # account_backend
-
-# Online User Manual
-USER_MANUAL_URL=http://localhost:3000
-
 ```
 
-### **3. Build Project**
+Or use a preset:
 
 ```bash
-# docsify deployment
-cd docs
-docker build -t docs .
-docker run -d   --name my-docs \
--p 3000:3000 \
--v $(pwd):/docs \
-docs
+npm run setenv app
+```
 
-# Production environment build
+Preset files already included in the repository:
+
+- `.env.app`
+- `.env.celestrak`
+- `.env.embed`
+- `.env.epfl`
+
+### 4. Update `.env`
+
+Make sure the following settings are correct:
+
+- `TIANXUN_SERVER_LOGIN=/api/login`
+- `TIANXUN_SERVER_SETTINGS=/api/settings`
+- `USER_MANUAL_URL=/manual`
+- `SCAI_AGENT_URL`
+- `SCAI_ADSB_URL`
+- `SCAI_AIS_URL`
+
+Notes:
+
+- `/api/login` and `/api/accountAdd` are reverse-proxied by Nginx to the account service
+- `/api/settings/` is reverse-proxied by Nginx to the main backend service
+- `/simulation/` is reverse-proxied by Nginx to the visualization / simulation result service
+- `/manual/` is reverse-proxied by Nginx to the Docsify user manual
+
+### 5. Build the Frontend Artifacts
+
+Development build:
+
+```bash
+npm run build:dev
+```
+
+Continuous watch build:
+
+```bash
+npm run build:watch
+```
+
+Production build:
+
+```bash
 npm run build
-
 ```
 
-### **4. Start Service**
+After the build completes, the frontend static files are output to `dist/`.
+
+### 6. Optional: Start the Local Docsify User Manual
 
 ```bash
-# Start local development server
-npm start
-
-# Service will start at http://localhost:5544
+cd docs
+docker build -t spacemv-scai-docs .
+docker run --rm -p 3000:3000 -v ${PWD}:/docs spacemv-scai-docs
 ```
 
-## **📚 Usage Guide**
+If the documentation service is not proxied through Nginx, you can temporarily change `USER_MANUAL_URL` in `.env` to:
 
-### **Core Architecture**
+```text
+http://localhost:3000
+```
 
-The main page loads a full-screen Canvas element for displaying Earth, satellites, and starry sky. UI elements are overlaid on the Canvas via DOM layer. Two Web Workers (positionCruncher.ts and orbitCruncher.ts) are responsible for continuously calculating satellite positions and updating highlighted object orbit lines.
+### 7. Start the Frontend Through Nginx
 
-The main rendering loop (drawManager.ts) is optimized to reduce memory leaks and maintain high FPS. This is usually achieved by letting functions modify global variables instead of returning variables, and using long functions instead of splitting them into multiple functions - this is intentional.
+This is the default startup approach recommended by this README.
 
-For usage instructions of various plugins and functional modules, please refer to the online user manual in the upper right corner of the main page.
+See the Nginx configuration file:
 
-<img width="2560" height="1440" alt="88ad034a54a84958b8c24d3b3144b7b8" src="https://github.com/user-attachments/assets/c269de40-e4e9-4e9a-a3ff-38130b60f2b6" />
+- [`deploy/nginx/frontend.conf`](./deploy/nginx/frontend.conf)
 
-### **Data Sources**
+This configuration handles:
 
-Please refer to <https://api.keeptrack.space/v2/sats> to get the latest satellite catalog.
+- `dist/` static files
+- `/api/login`, `/api/accountAdd` -> `account-backend-svc:5001`
+- `/api/settings/` -> `serve-backend-svc:8401`
+- `/simulation/` -> `visual-backend-svc:8501`
+- `/manual/` -> `scai-docs-svc:3000`
 
-## **🔧 Troubleshooting**
+#### Option 1: Start Nginx with Docker
 
-| Issue | Possible Causes and Troubleshooting |
-| :---- | :---- |
-| **Build Failure** | 1. Check if Node.js version meets requirements. 2. Delete node_modules and package-lock.json and reinstall dependencies. 3. Check if TypeScript configuration is correct. |
-| **Poor Rendering Performance** | 1. Check if browser supports WebGL. 2. Reduce the number of objects rendered simultaneously. 3. Check if Web Workers are working properly. |
-| **API Call Failure** | 1. Check if API address in .env configuration is correct. 2. Confirm if backend service is running normally. 3. Check network request logs in browser console. |
-| **Test Failure** | 1. Ensure all dependencies are correctly installed. 2. Check test environment configuration. 3. View test logs for detailed error information. |
+Build the frontend first:
 
-## **🤝 Contributing Guide**
+```bash
+npm run build
+```
 
-We warmly welcome community developers to participate in the construction of SpaceMV-ScAI Frontend! If you have any improvement suggestions or found bugs, please follow the following process:
+Windows PowerShell:
 
-1. **Fork this repository**: Click the Fork button in the upper right corner to copy the project to your GitHub account.  
-2. **Create branch**: Create a new branch from main branch for development.  
-   ```bash
-   git checkout -b feature/AmazingFeature
-   ```  
-3. **Commit changes**: Ensure code style is consistent and write clear Commit Message.  
-   ```bash
-   git commit -m 'feat: Add some AmazingFeature'
-   ```  
-4. **Push branch**:  
-   ```bash
-   git push origin feature/AmazingFeature
-   ```  
-5. **Submit Pull Request**: Initiate PR on GitHub and describe your changes in detail.
+```powershell
+docker run --rm -p 80:80 `
+  -v ${PWD}\dist:/opt/project/scai/frontend/dist:ro `
+  -v ${PWD}\deploy\nginx\frontend.conf:/etc/nginx/conf.d/default.conf:ro `
+  nginx:1.27
+```
 
-**Development Suggestions**:
+Linux / macOS:
 
-* Follow TypeScript strict mode to ensure type safety.  
-* When adding new features, please write corresponding unit tests.  
-* When modifying rendering logic, pay attention to performance optimization and avoid memory leaks.  
-* Run `npm run lint` before submitting code to ensure consistent code style.
+```bash
+docker run --rm -p 80:80 \
+  -v "$(pwd)/dist:/opt/project/scai/frontend/dist:ro" \
+  -v "$(pwd)/deploy/nginx/frontend.conf:/etc/nginx/conf.d/default.conf:ro" \
+  nginx:1.27
+```
 
-## **📄 License**
+Default access URL after startup:
 
-This project is licensed under the **GNU Affero General Public License v3.0**.
+```text
+http://localhost/
+```
 
-Copyright (c) 2025 Chengdu Tianxun Microsatellite Technology Co., Ltd.
+#### Option 2: Start Nginx on the Host Machine
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+```bash
+npm run build
+sudo cp deploy/nginx/frontend.conf /etc/nginx/conf.d/scai-frontend.conf
+sudo nginx -t
+sudo systemctl reload nginx
+```
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+If you are not in a `systemd` environment, you can also run:
 
-You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+```bash
+sudo nginx -s reload
+```
 
-## **📮 Contact**
+#### Notes Before Use
 
-If you have any questions, suggestions, or business cooperation needs, please contact the project maintenance team.
+- `account-backend-svc`, `serve-backend-svc`, `visual-backend-svc`, and `scai-docs-svc` in `frontend.conf` are service discovery names.
+- If you are not running in Kubernetes or the same container network, replace them with actual reachable addresses.
+- The configuration assumes the frontend build output is mounted at `/opt/project/scai/frontend/dist`. If the mount path differs, update `root` accordingly.
+- `npm start` can still be used for quick local preview of `dist/`, but it is not the recommended production startup method in this README.
 
-* **Email**: code@spacemv.com  
-* **Issues**: [GitHub Issues](https://github.com/tianxunweixiao/SpaceMV-ScAI-Frontend/issues)
+## Environment Variables
 
-For more information, please follow the company's WeChat official account:
+| Variable | Example Value | Description |
+| :--- | :--- | :--- |
+| `SETTINGS_PATH` | `public/settings/settingsOverride.js` | Settings override file copied to `dist/settings/settingsOverride.js` during build |
+| `FAVICON_PATH` | `public/img/favicons/favicon.ico` | Favicon used during build |
+| `LOADING_SCREEN_CSS_PATH` | `public/css/loading-screen.css` | Startup screen stylesheet |
+| `STYLE_CSS_PATH` | `public/css/style.css` | Main stylesheet |
+| `TEXT_LOGO_PATH` | `public/img/logo.png` | Text logo |
+| `PRIMARY_LOGO_PATH` | `public/img/logo-primary.png` | Primary logo |
+| `SECONDARY_LOGO_PATH` | `public/img/logo-secondary.png` | Secondary logo |
+| `MODE` | `development` | Build mode. In the current implementation, the value in `.env` overrides script parameters. Before a production build, confirm whether it should be changed to `production` |
+| `IS_PRO` | `false` | Whether to enable Pro plugin path switching |
+| `TIANXUN_SERVER_LOGIN` | `/api/login` | Build-time injected value for the login page; keep it aligned with reverse proxy configuration |
+| `TIANXUN_SERVER_SETTINGS` | `/api/settings` | Base path for the main business APIs |
+| `USER_MANUAL_URL` | `/manual` | User manual entry |
+| `SCAI_AGENT_URL` | `http://10.0.10.213:80/` | ScAI Agent frontend address |
+| `SCAI_ADSB_URL` | `http://10.0.88.5:8511` | ADS-B page address |
+| `SCAI_AIS_URL` | `http://10.0.88.5:8510` | AIS page address |
+
+## Common Scripts
+
+| Command | Description |
+| :--- | :--- |
+| `npm run setenv <name>` | Copy `.env.<name>` to `.env` |
+| `npm run build` | Build static artifacts into `dist/` |
+| `npm run build:dev` | Development-mode build |
+| `npm run build:watch` | Watch source changes and keep rebuilding |
+| `npm start` | Only for quick local preview of `dist/`; not the recommended formal startup method |
+| `npm test` | Run Jest tests |
+| `npm run lint` | Run ESLint |
+| `npm run cypress:open` | Open Cypress |
+
+## Development Notes
+
+### Login and Permissions
+
+- The entry file [`src/main.ts`](./src/main.ts) checks the local login state when the page loads.
+- Unauthenticated access to non-auth pages is automatically redirected to [`/login.html`](./public/login.html).
+- Login information is stored by default in `localStorage` under `auth-token` and `user-info`.
+
+### Data Loading Logic
+
+- The satellite catalog is fetched from `${TIANXUN_SERVER_SETTINGS}/satellites` first.
+- If the request fails because the network is unreachable, it falls back to `public/tle/tle.json`.
+- The constellation list is fetched and cached after startup, and related plugins reuse the same cached data.
+
+### External Page Integration Behavior
+
+- `SCAI_AGENT_URL`, `SCAI_ADSB_URL`, and `SCAI_AIS_URL` all support absolute URLs.
+- If an address uses `localhost` or `127.0.0.1`, the frontend automatically replaces it with the hostname currently used by the browser, which is convenient for LAN integration testing.
+
+## Troubleshooting
+
+| Issue | Suggestion |
+| :--- | :--- |
+| The homepage immediately redirects to the login page | Check whether valid `auth-token` and `user-info` exist in `localStorage` |
+| No satellite data is shown on the page | Check whether `/api/settings/satellites` is reachable; if the backend is unavailable, confirm that `public/tle/tle.json` exists |
+| The constellation list is empty or uploads fail | Check `/api/settings/constellations`, `/api/settings/upload_constellation`, and `/api/settings/constellations_find/:id` |
+| The coverage analysis button is unavailable | The current account must have `coverageAnalysisPermission=1` |
+| Agent / ADS-B / AIS shows "not configured" after clicking | Update the corresponding addresses in `.env`, rebuild, and reload Nginx |
+| The online manual cannot be opened | Check whether `USER_MANUAL_URL` is reachable or correctly proxied to the `docs/` service |
+| `.env` was changed but the page did not update | Rebuild the project and reload the Nginx configuration |
+
+## Acknowledgements
+
+- Original open-source project: [KeepTrack.Space](https://github.com/thkruz/keeptrack.space)
+- This project uses the AGPL-3.0 license. See [LICENSE](./LICENSE) for details
+
+## Contact
+
+- Email: `code@spacemv.com`
+- Issues: <https://github.com/tianxunweixiao/SpaceMV-ScAI-Frontend/issues>
+
+For more information, follow the company's WeChat official account:
 
 <img width="106" height="106" alt="image" src="https://github.com/user-attachments/assets/69a02ad0-422c-422a-bf5f-9b7890cf31ab" />
-
-## ✅ Todo List
-
-- [ ] **Intelligent Agent (Agent)**: Integrate AI Agent for automated constellation simulation task orchestration and scheduling.
-- [ ] **Multi-constellation Support**: Add preset support for navigation constellations and communication constellations.
-- [ ] **STK Interface Enhancement**: Expand API coverage to support more fine-grained simulation parameter configuration
-- [ ] **Documentation Improvement**: Supplement detailed video tutorials and API interface use cases.

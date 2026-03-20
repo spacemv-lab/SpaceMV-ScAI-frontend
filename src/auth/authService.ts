@@ -1,6 +1,5 @@
 // 认证服务类，负责处理用户登录、注册和会话管理
 
-import { settingsManager } from '../settings/settings';
 import { ToastMsgType } from '../interfaces';
 import { keepTrackApi } from '../keepTrackApi';
 
@@ -12,6 +11,7 @@ export interface User {
   avatar?: string;
   createdAt: Date;
   lastLogin?: Date;
+  coverageAnalysisPermission?: number;
 }
 
 // 认证服务类
@@ -37,7 +37,7 @@ export class AuthService {
       try {
         this.token = savedToken;
         // 从JSON解析出的时间是字符串，需要安全地转换为Date对象
-        const parsedUser = JSON.parse(savedUser);
+        const parsedUser = JSON.parse(savedUser) as Record<string, unknown>;
         
         // 确保createdAt是有效的日期字符串
         if (typeof parsedUser.createdAt === 'string') {
@@ -49,7 +49,11 @@ export class AuthService {
           parsedUser.lastLogin = new Date(parsedUser.lastLogin);
         }
         
-        this.currentUser = parsedUser as User;
+        const rawPermission = parsedUser.coverageAnalysisPermission ?? parsedUser.coverage_analysis_permission ?? 0;
+        const normalizedPermission = Number(rawPermission);
+        parsedUser.coverageAnalysisPermission = Number.isFinite(normalizedPermission) && normalizedPermission === 1 ? 1 : 0;
+
+        this.currentUser = parsedUser as unknown as User;
         
       } catch (error) {
         this.logout();

@@ -8,6 +8,7 @@ interface ColorboxOptions {
   title?: string;
   image?: boolean;
   callback?: () => void;
+  skipLoading?: boolean;
 }
 
 let isColorBoxReady = false;
@@ -38,20 +39,30 @@ export const openColorbox = (url: string, options: ColorboxOptions = {}): void =
 
   colorboxDom.addEventListener('click', handleClick);
 
-  showLoading(() => {
+  const openContent = () => {
     colorboxDom.style.display = 'block';
     if (options.image) {
       setupImageColorbox_(url, () => {
         slideInRight(getEl('colorbox-container'), 750);
-        hideLoading();
+        if (!options.skipLoading) {
+          hideLoading();
+        }
       });
     } else {
       setupIframeColorbox_(url, () => {
         slideInRight(getEl('colorbox-container'), 750);
-        hideLoading();
+        if (!options.skipLoading) {
+          hideLoading();
+        }
       });
     }
-  }, -1);
+  };
+
+  if (options.skipLoading) {
+    openContent();
+  } else {
+    showLoading(openContent, -1);
+  }
 
   if (options.title) {
     setColorboxTitle(options.title);

@@ -241,6 +241,9 @@ export class WebpackManager {
           new DefinePlugin({
             'import.meta.env.TIANXUN_SERVER_SETTINGS': JSON.stringify(process.env.TIANXUN_SERVER_SETTINGS),
             'import.meta.env.USER_MANUAL_URL': JSON.stringify(process.env.USER_MANUAL_URL),
+            'import.meta.env.SCAI_AGENT_URL': JSON.stringify(process.env.SCAI_AGENT_URL ?? ''),
+            'import.meta.env.SCAI_ADSB_URL': JSON.stringify(process.env.SCAI_ADSB_URL ?? ''),
+            'import.meta.env.SCAI_AIS_URL': JSON.stringify(process.env.SCAI_AIS_URL ?? ''),
           }),
           new WebpackBar({
             name: 'KeepTrack Main Code',

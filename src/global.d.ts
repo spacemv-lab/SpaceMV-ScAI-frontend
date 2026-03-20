@@ -13,6 +13,9 @@ declare global {
 
   interface ImportMetaEnv {
     TIANXUN_SERVER_SETTINGS: string;
+    SCAI_AGENT_URL?: string;
+    SCAI_ADSB_URL?: string;
+    SCAI_AIS_URL?: string;
     [key: string]: string | undefined;
   }
 

@@ -457,7 +457,8 @@
             btnText.textContent = '登录中';
             
             try {
-                const apiUrl = window.tianxunServer + '/api/login';
+                // const apiUrl = window.tianxunServer + '/api/login';
+                const apiUrl = '/api/login';
 
                 // 调用认证API
                 const response = await fetch(apiUrl, {
@@ -475,12 +476,35 @@
                     } else if (data.code === 501) {
                         throw new Error('登录失败，账号不存在');      
                     } else if (data.code === 200) {
-                        const userInfo = data.data;
-                        const token = data.data.email || '';
+                        const userInfo = data.data || {};
+                        const normalizedUserInfo = { ...userInfo };
+                        const fallbackId = normalizedUserInfo.userId ?? normalizedUserInfo.uid;
+
+                        if ((normalizedUserInfo.id === undefined || normalizedUserInfo.id === null) && fallbackId !== undefined && fallbackId !== null) {
+                            normalizedUserInfo.id = String(fallbackId);
+                        }
+                        if (typeof normalizedUserInfo.id === 'number') {
+                            normalizedUserInfo.id = String(normalizedUserInfo.id);
+                        }
+
+                        const rawCoveragePermission =
+                            normalizedUserInfo.coverageAnalysisPermission ??
+                            normalizedUserInfo.coverage_analysis_permission ??
+                            0;
+                        const normalizedCoveragePermission = Number(rawCoveragePermission) === 1 ? 1 : 0;
+                        normalizedUserInfo.coverageAnalysisPermission = normalizedCoveragePermission;
+                        normalizedUserInfo.coverage_analysis_permission = normalizedCoveragePermission;
+
+                        const token =
+                            normalizedUserInfo.token ||
+                            normalizedUserInfo.authToken ||
+                            data.token ||
+                            normalizedUserInfo.email ||
+                            '';
 
                         // 存储令牌和用户信息
                         localStorage.setItem('auth-token', token);
-                        localStorage.setItem('user-info', JSON.stringify(userInfo));
+                        localStorage.setItem('user-info', JSON.stringify(normalizedUserInfo));
                         
                         // 重定向到首页
                         window.location.href = '/';
@@ -551,7 +575,8 @@
                 return;
             }
             
-            const apiUrl = window.tianxunServer + '/api/accountAdd';
+            // const apiUrl = window.tianxunServer + '/api/accountAdd';
+            const apiUrl = '/api/accountAdd';
 
             // 调用后台注册接口
             fetch(apiUrl, {

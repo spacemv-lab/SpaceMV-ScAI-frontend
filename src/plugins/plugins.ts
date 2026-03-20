@@ -10,6 +10,8 @@ import { KeepTrackApi } from '../keepTrackApi';
 import { getEl } from '../lib/get-el';
 import { errorManagerInstance } from '../singletons/errorManager';
 import { AnalysisMenu } from './analysis/analysis';
+import { AdsbPlugin } from './ads-b/ads-b';
+import { AisPlugin } from './ais/ais';
 import { Breakup } from './breakup/breakup';
 import { Calculator } from './calculator/calculator';
 import { ClassificationBar } from './classification-bar/classification-bar';
@@ -276,6 +278,8 @@ export const loadPlugins = async (keepTrackApi: KeepTrackApi, plugins: KeepTrack
       { init: () => new GroundTargetPlugin().init(), config: plugins.GroundTargetPlugin },
       { init: () => new ConstellationDeclineSimulationPlugin().init(), config: plugins.ConstellationDeclineSimulationPlugin },
       { init: () => new AlgorithmModelPlugin().init(), config: plugins.AlgorithmModelPlugin },
+      { init: () => new AdsbPlugin().init(), config: plugins.AdsbPlugin },
+      { init: () => new AisPlugin().init(), config: plugins.AisPlugin },
     ];
 
     for (const { init, config } of pluginList) {

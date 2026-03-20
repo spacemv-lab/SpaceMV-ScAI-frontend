@@ -1,12 +1,12 @@
 import { KeepTrackPlugin } from '../KeepTrackPlugin';
 import satelliteAlt from '@public/img/icons/constellation-decline-simulation.png';
-import infoIcon from '@public/img/icons/info2.png';
 import { keepTrackApi } from '@app/keepTrackApi';
-import { getEl, showEl } from '@app/lib/get-el';
+import { getEl } from '@app/lib/get-el';
 import { ToastMsgType, KeepTrackApiEvents } from '@app/interfaces';
 import { CatalogLoader, Constellation } from '@app/static/catalog-loader';
 import { showModal} from '@app/singletons/popup-modal';
 import { SuccessModal } from '@app/singletons/SuccessModal';
+import { authService } from '@app/auth/authService';
 interface SatelliteObject {
   id: number;
   name?: string;
@@ -18,8 +18,11 @@ export class ConstellationDeclineSimulationPlugin extends KeepTrackPlugin {
   private readonly ITEM_HEIGHT = 36; // 每个卫星项的高度（像素）
   private readonly BUFFER_SIZE = 20; // 缓冲区大小
   private cachedFilteredSats: SatelliteObject[] = [];// 缓存过滤后的卫星数据
+  private readonly allowedConstellationIds_ = new Set<string>();
   private searchTimeout: number | null = null;
   private readonly DEBOUNCE_DELAY = 800;
+  private static readonly NO_PERMISSION_MSG = '当前账号没有该功能的使用权限，请联系管理员处理。';
+  private static readonly CONSTELLATION_HINT_MSG = '当前覆盖性分析仅支持对地观测星座。';
 
   dependencies_ = [];
   bottomIconImg = satelliteAlt;
@@ -130,6 +133,9 @@ export class ConstellationDeclineSimulationPlugin extends KeepTrackPlugin {
         <div class="search-container" id="search-div">
           <input type="text" id="decline_sat-search" placeholder="搜索卫星..." class="search-input">
         </div>
+        <div id="constellation-support-tip" class="constellation-support-tip" style="display:none;">
+          当前覆盖性分析仅支持对地观测星座。
+        </div>
         <div id="decline_sat-list-container" class="scrollable">
           <ul id="decline_sat-list" style="transform: translateY(0px); position: relative;"></ul>
         </div>
@@ -155,6 +161,46 @@ export class ConstellationDeclineSimulationPlugin extends KeepTrackPlugin {
     spanTypeEle.innerHTML = '';
   }
 
+  private hasCoverageAnalysisPermission_(): boolean {
+    const currentUser = authService.getCurrentUser() as
+      | {
+          coverageAnalysisPermission?: number | string;
+          coverage_analysis_permission?: number | string;
+        }
+      | null;
+
+    if (!currentUser) {
+      return false;
+    }
+
+    const permissionRaw = currentUser.coverageAnalysisPermission ?? currentUser.coverage_analysis_permission ?? 0;
+
+    return Number(permissionRaw) === 1;
+  }
+
+  private isEarthObservationConstellation_(constellation: Constellation): boolean {
+    if (Number(constellation.constellation_type) === 3) {
+      return true;
+    }
+
+    if (typeof constellation.constellation_type === 'string') {
+      return constellation.constellation_type.trim() === '对地观测星座';
+    }
+
+    return false;
+  }
+
+  private setConstellationHintVisibility_(isVisible: boolean): void {
+    const hintEl = getEl('constellation-support-tip') as HTMLDivElement | null;
+
+    if (!hintEl) {
+      return;
+    }
+
+    hintEl.innerText = ConstellationDeclineSimulationPlugin.CONSTELLATION_HINT_MSG;
+    hintEl.style.display = isVisible ? 'block' : 'none';
+  }
+
   addHtml() {
     super.addHtml();
 
@@ -168,6 +214,12 @@ export class ConstellationDeclineSimulationPlugin extends KeepTrackPlugin {
       const satSelectCloseBtn = getEl('select_btn_close') as HTMLButtonElement;
       const caculateProcessCloseBtn = getEl('caculate-process-close-btn') as HTMLButtonElement;
       const caculateProcessDiv = getEl('caculate-process') as HTMLDivElement;
+
+      if (!this.hasCoverageAnalysisPermission_()) {
+        this.setBottomIconToDisabled(false);
+      } else {
+        this.setBottomIconToEnabled();
+      }
     
       if (selectButton) {
         // 载荷选择按钮点击事件
@@ -180,8 +232,10 @@ export class ConstellationDeclineSimulationPlugin extends KeepTrackPlugin {
           
           if(satSingelInput.checked){
             this.updateSatelliteList();
+            this.setConstellationHintVisibility_(false);
           }else{
             this.updateConstellationList();
+            this.setConstellationHintVisibility_(true);
           }  
           selectDiv.style.display = 'block';      
         });
@@ -194,6 +248,7 @@ export class ConstellationDeclineSimulationPlugin extends KeepTrackPlugin {
 
           const spanCateEle = <HTMLSpanElement>getEl('select_category');
           spanCateEle.innerHTML = '卫星';
+          this.setConstellationHintVisibility_(false);
         
           this.clearSelectedContent()
         });
@@ -204,6 +259,7 @@ export class ConstellationDeclineSimulationPlugin extends KeepTrackPlugin {
 
           const spanCateEle = <HTMLSpanElement>getEl('select_category');
           spanCateEle.innerHTML = '星座';
+          this.setConstellationHintVisibility_(true);
 
           this.clearSelectedContent()
         });
@@ -368,6 +424,17 @@ export class ConstellationDeclineSimulationPlugin extends KeepTrackPlugin {
         overflow-x: hidden;
         margin: 0;
         padding: 0;
+      }
+
+      .constellation-support-tip {
+        margin: 8px 10px 10px 10px;
+        padding: 8px 10px;
+        color: #ffd54f;
+        font-size: 12px;
+        line-height: 1.5;
+        border: 1px solid rgba(255, 213, 79, 0.45);
+        border-radius: 4px;
+        background: rgba(255, 213, 79, 0.08);
       }
 
       .sat_side-menu {
@@ -538,15 +605,15 @@ export class ConstellationDeclineSimulationPlugin extends KeepTrackPlugin {
   }
 
   bottomIconCallback = () => {
-      if (!this.isMenuButtonActive) {
+      if (this.hasCoverageAnalysisPermission_()) {
         return;
       }
-      // 使用标准方式打开侧边菜单
-      const menu = getEl(this.sideMenuElementName);
-  
-      if (menu) {
-        showEl(menu);
-      }
+
+      keepTrackApi.getUiManager().toast(
+        ConstellationDeclineSimulationPlugin.NO_PERMISSION_MSG,
+        ToastMsgType.caution,
+        true,
+      );
   };
 
   addJs(): void {
@@ -625,6 +692,7 @@ export class ConstellationDeclineSimulationPlugin extends KeepTrackPlugin {
 
     // 创建DocumentFragment以优化DOM操作
     const fragment = document.createDocumentFragment();
+    this.allowedConstellationIds_.clear();
 
     // 只渲染可见区域内的项
     for (let i = startIndex; i < endIndex; i++) {
@@ -683,10 +751,12 @@ export class ConstellationDeclineSimulationPlugin extends KeepTrackPlugin {
 
     const searchDiv = getEl('search-div') as HTMLDivElement;
     searchDiv.style.display = 'block';
+    this.setConstellationHintVisibility_(false);
   }
 
   private updateConstellationList() {
-    let constellationsData = CatalogLoader.getCachedConstellations() as Constellation[];
+    const constellationsData = (CatalogLoader.getCachedConstellations() as Constellation[])
+      .filter((constellation) => this.isEarthObservationConstellation_(constellation));
     const length = constellationsData.length;
 
     const listElement = getEl('decline_sat-list');
@@ -708,6 +778,7 @@ export class ConstellationDeclineSimulationPlugin extends KeepTrackPlugin {
 
       li.className = 'menu-selectable deciline_sat-item';
       li.setAttribute('constellation-id', obj.constellation);
+      this.allowedConstellationIds_.add(obj.constellation);
       li.textContent = obj.constellation_name
       li.style.position = 'absolute';
       li.style.top = `${i * this.ITEM_HEIGHT}px`;
@@ -728,6 +799,7 @@ export class ConstellationDeclineSimulationPlugin extends KeepTrackPlugin {
 
     const searchDiv = getEl('search-div') as HTMLDivElement;
     searchDiv.style.display = 'none';
+    this.setConstellationHintVisibility_(true);
   }
 
   private handleScroll_() {
@@ -780,6 +852,15 @@ export class ConstellationDeclineSimulationPlugin extends KeepTrackPlugin {
   }
 
   private constellationItemClick_(constellationId: number, constellationName: string): void {  
+    if (!this.allowedConstellationIds_.has(constellationId.toString())) {
+      keepTrackApi.getUiManager().toast(
+        ConstellationDeclineSimulationPlugin.CONSTELLATION_HINT_MSG,
+        ToastMsgType.caution,
+        true,
+      );
+      return;
+    }
+
     if (constellationId && constellationName) {
       const spanNameEle = <HTMLSpanElement>getEl('select_name');
       const spanIdEle = <HTMLSpanElement>getEl('select_id');
@@ -993,8 +1074,10 @@ export class ConstellationDeclineSimulationPlugin extends KeepTrackPlugin {
                           loadingDiv.remove();
                         }
 
-                        const tianxunUrl = new URL(settingsManager.dataSources.tianxunServer);
-                        const resultUrl = `http://${tianxunUrl.hostname}:8501${resultData.url}`;
+                        // const tianxunUrl = new URL(settingsManager.dataSources.tianxunServer);
+                        // print(resultData.url);
+                        // const resultUrl = `http://${tianxunUrl.hostname}:8501${resultData.url}`;
+                        const resultUrl = `${window.location.origin}/simulation${resultData.url}`;
                         showModal(resultUrl, {
                           width: '1460px',
                           height: '1200px'

@@ -269,6 +269,14 @@ export const defaultPlugins = <KeepTrackPluginsConfiguration>{
     enabled: true,
     order: 607,
   },
+  AdsbPlugin: {
+    enabled: true,
+    order: 608,
+  },
+  AisPlugin: {
+    enabled: true,
+    order: 609,
+  },
   // Non-Menu plugins
   SatInfoBoxCore: {
     enabled: true,
